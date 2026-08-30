@@ -1,0 +1,11 @@
+[project]
+name = "hot-news"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "feedparser>=6.0.14",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.3",
+    "uvicorn[standard]>=0.52.4",
+]
