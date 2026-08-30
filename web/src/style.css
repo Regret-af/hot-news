@@ -1,0 +1,57 @@
+/* 全局样式：任务书第 5 节的设计 token + 基础重置。
+   组件各自的布局样式写在组件内（scoped），这里只放共享变量与页面底色。 */
+:root {
+  /* 背景与卡片 */
+  --color-bg: #F7F8FA;
+  --color-card: #FFFFFF;
+  /* 主色（按钮 / 链接 / 阶段横幅强调）与悬停加深的同色系 */
+  --color-primary: #2F6BFF;
+  --color-primary-strong: #2456D6;
+  /* 危险色：错误横幅底 + 文字 */
+  --color-danger-bg: #FEE2E2;
+  --color-danger-text: #B91C1C;
+  /* 文字：正文 / 次要 */
+  --color-text: #1F2937;
+  --color-text-secondary: #6B7280;
+  /* 健康状态点（任务书要求绿=ok）；分隔线用同灰系的浅灰 */
+  --color-success: #16A34A;
+  --color-border: #E5E7EB;
+  /* 圆角 */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-badge: 999px;
+  /* 阴影 */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* 间距：8px 基数 */
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+a {
+  color: var(--color-primary);
+}
