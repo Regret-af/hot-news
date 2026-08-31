@@ -136,7 +136,7 @@ def chat_digest(news: list[NewsItem], retries: int = 3) -> MorningReport:
                 data = response.json()
                 logger.info("本次消耗token: %d", data.get("usage", {}).get("total_tokens", 0))
 
-                return parse_report_json(data)
+                return parse_report_json(data["choices"][0]["message"]["content"])
         except (httpx.TimeoutException, httpx.ConnectError) as e:
             last_exc = e
             logger.warning("第 %s 次重试，错误如下: %s", attempt, e)
