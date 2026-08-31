@@ -46,7 +46,7 @@ def get_provider() -> ProviderConfig:
     if deepseek:
         return ProviderConfig("https://api.deepseek.com", "deepseek-v4-flash", deepseek)
     elif zhipu:
-        return ProviderConfig("https://open.bigmodel.cn/api/paas/v4", "glm-4.7-flash", zhipu)
+        return ProviderConfig("https://open.bigmodel.cn/api/paas/v4", "glm-4-flash", zhipu)
 
     # 没有配置 API_KEY，抛出异常
     raise KeyError("未配置 API Key（参考 .env.example）")

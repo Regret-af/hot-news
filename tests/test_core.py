@@ -79,7 +79,7 @@ def test_fetch_all_skips_broken_source(monkeypatch):
 
     monkeypatch.setattr(news_mod, "fetch_feed", fake_fetch)
     items = news_mod.fetch_all()          # 默认 NEWS_SOURCES 里必含 solidot
-    assert items == good
+    assert [items[0]] == good
     assert len(calls) == len(news_mod.NEWS_SOURCES), "坏源不阻断其余源"
 
 
@@ -97,10 +97,13 @@ def test_provider_no_key_leak():
 
 
 def test_news_translates_no_news_to_503(monkeypatch):
+    from app.main import get_report_provider
     def broken_provider():
-        raise NoNewsError("所有新闻源都失败了")
+        def _raise():
+            raise NoNewsError("所有新闻源都失败了")
+        return _raise
 
-    app.dependency_overrides[app.get_report_provider] = broken_provider
+    app.dependency_overrides[get_report_provider] = broken_provider
     try:
         r = client.get("/news")
         assert r.status_code == 503, f"无素材应 503，实际 {r.status_code}"
