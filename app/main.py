@@ -18,7 +18,7 @@ app = FastAPI(title="热点早报生成器", description="阶段 0 热身项目 
 
 
 def get_report_provider():
-    """依赖工厂：返回"生成一份早报"的函数（Day 9 的 DI 模式，测试可 dependency_overrides）。
+    """依赖工厂：返回"生成一份早报"的函数。
 
     这里串起完整业务链：抓新闻 -> 调 LLM -> 结构化早报。
     业务异常（NoNewsError/LLMError）向上抛，由路由层翻译成 HTTP 状态码——
@@ -34,28 +34,27 @@ def get_report_provider():
 
 @app.get("/health")
 def health() -> dict:
-    # TODO Day 12: 返回 {"status": "ok"}（部署标配）
-    raise NotImplementedError
+    return {"status": "ok"}
 
 
 @app.get("/provider")
 def provider_info() -> dict:
-    """TODO Day 12: 返回 {"base_url": ..., "model": ...}——调试用，绝不返回 api_key！"""
-    raise NotImplementedError
+    config = get_provider()
+    return {
+        "base_url": config.base_url,
+        "model": config.model
+    }
 
 
 @app.get("/news")
 def get_news(report_provider=Depends(get_report_provider)) -> MorningReport:
-    # TODO Day 12:
-    # try:
-    #     return report_provider()
-    # except NoNewsError as e:
-    #     raise HTTPException(status_code=503, detail=str(e)) from e     # 暂时没有内容
-    # except LLMError as e:
-    #     logger.exception("LLM 链路失败")                                # 500 前留堆栈
-    #     raise HTTPException(status_code=502, detail=f"LLM 链路失败: {e}") from e
-    raise NotImplementedError
-
+    try:
+        return report_provider()
+    except NoNewsError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+    except LLMError as e:
+        logger.exception("LLM 链路失败")
+        raise HTTPException(status_code=502, detail=f"LLM 链路失败: {e}") from e
 
 @app.get("/news/stream")
 def get_news_stream() -> StreamingResponse:
