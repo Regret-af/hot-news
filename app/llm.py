@@ -23,30 +23,31 @@ logger = logging.getLogger(__name__)
 
 # ---- Prompt 模板（技术亮点：Prompt 模板化）----
 # 注意：模板里必须出现"JSON"字样——DeepSeek 的 json_object 模式要求 prompt 含该词
-DIGEST_PROMPT_TEMPLATE = """你是一份科技早报的主编。下面是从 {source_count} 个科技资讯源抓到的 {news_count} 条新闻：
+DIGEST_PROMPT_TEMPLATE = """你是一份科技早报的主编。下面是从 {source_count} 个科技资讯源抓到的 {news_count} 条新闻，每条格式为：[来源] 标题(链接: url): 摘要
 
 {news_block}
 
 请输出一份 3 分钟能读完的早报，严格要求：
 1. digest：不超过 150 字的总览摘要，口语化、有信息量；
-2. items：挑出最值得关注的 3-5 条，每条给一句 20 字以内的点评（comment 字段），source/url 沿用原新闻；
-3. 只输出 JSON，格式：
+2. items：从上方新闻中挑出最值得关注的 3-5 条，每条给一句 20 字以内的点评（comment 字段）；
+3. source 与 url 必须原样使用上方新闻条目方括号和括号里的值，一字不改，禁止编造；
+4. 只输出 JSON，格式：
 {{"digest": "...", "items": [{{"title": "...", "summary": "...", "comment": "...", "source": "...", "url": "..."}}]}}
 """
 
 
 def build_prompt(news: list[NewsItem]) -> str:
-    """news_block 每行一条 '- 标题：摘要'（summary 截断到 100 字，控制 token）。"""
+    """news_block 每行一条：[来源] 标题(链接: url): 摘要（截断 100 字）。"""
 
     result: str = ""
 
     # 遍历新闻，组装 news_block
     for info in news:
-        result += f"- {info.title}：{info.summary[:100]}\n"
+        result += f"- [{info.source}] {info.title}(链接: {info.url})：{info.summary[:100]}\n"
 
     # 组装 prompt
     prompt = DIGEST_PROMPT_TEMPLATE.format(
-        source_count = 3,
+        source_count = len({item.source for item in news}),
         news_count = len(news),
         news_block = result
     )
@@ -148,7 +149,7 @@ def chat_digest(news: list[NewsItem], retries: int = 3) -> MorningReport:
                 time.sleep(_backoff_delay(attempt))
             else:
                 logger.warning("调用大模型失败: %s", e)
-                raise LLMError() from e
+                raise LLMError(f"HTTP {e.response.status_code}") from e
         except ValueError as e:
             last_exc = e
             logger.warning("第 %s 次重试，错误如下: %s", attempt, "大模型抽风，畸形JSON")
