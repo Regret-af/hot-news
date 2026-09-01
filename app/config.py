@@ -10,12 +10,12 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-# ---- 常量：新闻源清单（Day 12 可自行增删；feedparser 能解析 RSS/Atom）----
+# ---- 常量：新闻源清单----
 # 推荐源（免费、国内可达）：
 NEWS_SOURCES: list[str] = [
-    "https://www.ruanyifeng.com/blog/atom.xml",   # 阮一峰《科技爱好者周刊》
-    "https://sspai.com/feed",                     # 少数派
-    "https://www.solidot.org/index.rss",          # Solidot
+    ("阮一峰《科技爱好者周刊》", "https://www.ruanyifeng.com/blog/atom.xml"),   # 阮一峰《科技爱好者周刊》
+    ("少数派", "https://sspai.com/feed"),                     # 少数派
+    ("Solidot", "https://www.solidot.org/index.rss"),          # Solidot
 ]
 
 # LLM 费率（简化版，元/千 token）

@@ -28,11 +28,20 @@ def fetch_feed(url: str) -> list[NewsItem]:
     result: list[NewsItem] = []
 
     for entry in d.entries[:5]:
-        title = entry.get("title")
+        title = entry.get("title", "")
         summary = entry.get("summary")
         link = entry.get("link")
 
-        result.append(NewsItem(title=title, summary=summary, source=url, url=link))
+        if title == "":
+            continue
+
+        result.append(
+            NewsItem(
+                title=title,
+                summary=summary,
+                source=next((n for n, u in NEWS_SOURCES if u == url), "未知来源"),
+                url=link
+                ))
 
     return result
 
@@ -47,7 +56,7 @@ def fetch_all(sources: list[str] | None = None) -> list[NewsItem]:
     """
     # 判断是否传入数据源，未传入使用默认数据源
     if sources is None:
-        sources = NEWS_SOURCES
+        sources = [source[1] for source in NEWS_SOURCES]
 
     result: list[NewsItem] = []
 
