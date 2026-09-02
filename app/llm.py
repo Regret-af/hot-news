@@ -21,8 +21,7 @@ from app.schemas import MorningReport, NewsItem, ReportItem
 
 logger = logging.getLogger(__name__)
 
-# ---- Prompt 模板（技术亮点：Prompt 模板化）----
-# 注意：模板里必须出现"JSON"字样——DeepSeek 的 json_object 模式要求 prompt 含该词
+# ---- Prompt 模板 ----
 DIGEST_PROMPT_TEMPLATE = """你是一份科技早报的主编。下面是从 {source_count} 个科技资讯源抓到的 {news_count} 条新闻，每条格式为：[来源] 标题(链接: url): 摘要
 
 {news_block}
@@ -61,8 +60,7 @@ def _backoff_delay(attempt: int) -> float:
 
 
 def parse_report_json(text: str) -> MorningReport:
-    """容错：LLM 有概率用 ```json ... ``` 包裹（哪怕 json_object 模式）——先剥壳再 json.loads；
-    解析失败 raise ValueError（chat_digest 会把它当可重试错误）。"""
+    """容错：先剥壳再 json.loads；解析失败 raise ValueError。"""
     # 进行简单的容错
     text = text.strip().removeprefix("```json").removesuffix("```")
 
@@ -100,16 +98,6 @@ def parse_report_json(text: str) -> MorningReport:
 
 
 def chat_digest(news: list[NewsItem], retries: int = 3) -> MorningReport:
-    """流程：
-    1. prompt = build_prompt(news)；payload 带 response_format={"type": "json_object"}
-    2. 重试循环：
-       - TimeoutException / ConnectError -> 可重试
-       - HTTPStatusError 且 status_code == 429 -> 可重试（限流是暂时的！）
-       - HTTPStatusError 其他 4xx/5xx -> raise LLMError（不可重试）
-       - ValueError（parse_report_json 抛的畸形 JSON）-> 可重试（模型抽风）
-       - 可重试：last_exc 记录，attempt < retries 时 time.sleep(_backoff_delay(attempt))
-    3. 重试耗尽 raise LLMError("重试 N 次仍失败") from last_exc
-    提示：raise_for_status() 要在 stream 之外正常用；logger.info 记录每次调用的 token 消耗。"""
     # 获取 prompt
     prompt = build_prompt(news)
 

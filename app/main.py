@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""FastAPI 入口：路由层。业务在 news.py/llm.py，路由只做参数校验和异常翻译（Day 8 的分层）。"""
+"""FastAPI 入口：路由层。业务在 news.py/llm.py，路由只做参数校验和异常翻译。"""
 import logging
 
 import httpx

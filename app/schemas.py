@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
-"""数据模型：全项目的 pydantic 模型只定义一次，处处导入（Day 8 批改的教训）。
-
-契约来源：docs/frontend-brief.md 第 3 节（唯一契约）。
-两个"条目"模型是不同的东西，不要合并：
-- NewsItem：RSS 抓到的原始新闻（喂给 LLM 的原料）
-- ReportItem：早报要点（LLM 产出，带 AI 点评 comment）
-"""
+"""数据模型：全项目的 pydantic 模型只定义一次，处处导入。"""
 from datetime import date
 
 from pydantic import BaseModel, Field
 
 
 class NewsItem(BaseModel):
-    """一条原始新闻（从 RSS 条目提取，作为 LLM 的输入材料）"""
+    """一条原始新闻"""
     title: str = Field(min_length=1)
     summary: str = ""
     source: str          # 源名称（如 "少数派"），不是 URL
@@ -20,7 +14,7 @@ class NewsItem(BaseModel):
 
 
 class ReportItem(BaseModel):
-    """早报要点（LLM 产出；契约 3.2：source/url 可能缺失，前端容忍 null）"""
+    """早报要点（LLM 产出；source/url 可能缺失，前端容忍 null）"""
     title: str = Field(min_length=1)
     summary: str = ""
     comment: str = Field(default="", description="AI 一句话点评")
