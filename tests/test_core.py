@@ -92,6 +92,10 @@ def test_health():
     assert client.get("/health").json() == {"status": "ok"}
 
 
+@pytest.mark.skipif(
+        not (os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("ZHIPU_API_KEY")),
+        reason="需要真实 API Key 的冒烟测试，CI 无密钥环境自动跳过"
+)
 def test_provider_no_key_leak():
     r = client.get("/provider")
     assert r.status_code == 200
