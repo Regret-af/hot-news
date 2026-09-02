@@ -1,5 +1,7 @@
 # 热点早报生成器（Hot News）
 
+[![CI](https://github.com/Regret-af/hot-news/actions/workflows/ci.yml/badge.svg)](https://github.com/Regret-af/hot-news/actions/workflows/ci.yml)
+
 > 上班族没时间刷资讯——每天一份 3 分钟 AI 早报：抓取科技圈热点，大模型生成摘要与点评，SSE 流式输出打字机效果。
 
 阶段 0 热身项目 · 2026-09 · 后端 Python/FastAPI · 前端 Vue3
