@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """配置模块：厂商配置与新闻源。
 
-设计原则（对照你 Day 6 的 provider()，按项目规范重写）：
+设计原则：
 - 密钥只从环境变量读，.env 由 python-dotenv 加载，绝不写死在代码里
 - 配置集中一处（模块级缓存），不每个请求都读一遍 .env
 """
@@ -18,7 +18,7 @@ NEWS_SOURCES: list[tuple[str, str]] = [
     ("Solidot", "https://www.solidot.org/index.rss"),          # Solidot
 ]
 
-# LLM 费率（简化版，元/千 token）
+# LLM 费率
 PRICE_PER_1K_TOKENS = 0.01
 
 
@@ -30,11 +30,7 @@ class ProviderConfig:
 
 
 def get_provider() -> ProviderConfig:
-    """从环境变量读厂商配置。
-
-    规则：DEEPSEEK_API_KEY 优先，其次 ZHIPU_API_KEY，
-    都没有 -> raise KeyError("未配置 API Key（参考 .env.example）")。
-    """
+    """从环境变量读厂商配置。"""
 
     # 加载环境变量
     load_dotenv()
