@@ -30,6 +30,10 @@ def _sample_news() -> list[NewsItem]:
 
 
 # ---------- config ----------
+@pytest.mark.skipif(
+        not (os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("ZHIPU_API_KEY")),
+        reason="需要真实 API Key 的冒烟测试，CI 无密钥环境自动跳过"
+)
 def test_get_provider():
     cfg = get_provider()
     assert isinstance(cfg, ProviderConfig)
@@ -95,7 +99,10 @@ def test_provider_no_key_leak():
     assert "base_url" in body and "model" in body
     assert "sk-" not in body, "api_key 绝不能出现在响应里"
 
-
+@pytest.mark.skipif(
+        not (os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("ZHIPU_API_KEY")),
+        reason="需要真实 API Key 的冒烟测试，CI 无密钥环境自动跳过"
+)
 def test_news_translates_no_news_to_503(monkeypatch):
     from app.main import get_report_provider
     def broken_provider():
