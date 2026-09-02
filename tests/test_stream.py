@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Day 13 自测：流式管线 + /news/stream（结构断言离线 + 一条真实流式）。
-
+"""
 运行（项目根目录）：uv run pytest tests/test_stream.py -v
 """
 import json
+import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -97,7 +97,11 @@ def test_stream_no_news_error_frame(monkeypatch):
     assert lines[-1] == "data: [DONE]"
 
 
-# ---------- 真实流式（RSS + 两段 LLM，约几分钱）----------
+# ---------- 真实流式（RSS + 两段 LLM）----------
+@pytest.mark.skipif(
+        not (os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("ZHIPU_API_KEY")),
+        reason="需要真实 API Key 的冒烟测试，CI 无密钥环境自动跳过"
+)
 def test_stream_real_end_to_end():
     with client.stream("GET", "/news/stream") as r:
         lines = _sse_lines(r)

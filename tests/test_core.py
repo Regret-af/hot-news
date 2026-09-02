@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Day 12 自测（结构断言离线 + 一条真实链路）。
-
+"""
 运行（项目根目录）：uv run pytest tests/test_core.py -v
 前置：uv add --dev pytest
 """
 import json
+import os
 from datetime import date
 
 import httpx
@@ -112,7 +112,11 @@ def test_news_translates_no_news_to_503(monkeypatch):
         app.dependency_overrides.clear()
 
 
-# ---------- 真实链路（RSS + LLM，约几分钱）----------
+# ---------- 真实链路（RSS + LLM）----------
+@pytest.mark.skipif(
+        not (os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("ZHIPU_API_KEY")),
+        reason="需要真实 API Key 的冒烟测试，CI 无密钥环境自动跳过"
+)
 def test_news_real_end_to_end():
     report = client.get("/news").json()
     assert report["report_date"] == str(date.today())
