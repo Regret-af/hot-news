@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # ---- 常量：新闻源清单----
 # 推荐源（免费、国内可达）：
-NEWS_SOURCES: list[str] = [
+NEWS_SOURCES: list[tuple[str, str]] = [
     ("阮一峰《科技爱好者周刊》", "https://www.ruanyifeng.com/blog/atom.xml"),   # 阮一峰《科技爱好者周刊》
     ("少数派", "https://sspai.com/feed"),                     # 少数派
     ("Solidot", "https://www.solidot.org/index.rss"),          # Solidot
